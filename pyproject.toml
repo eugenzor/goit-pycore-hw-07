@@ -1,0 +1,9 @@
+[project]
+name = "goit-pycore-hw-06"
+version = "0.1.0"
+description = "Тема 9. Домашня робота. Основи роботи з класами"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "ruff>=0.15.13",
+]
