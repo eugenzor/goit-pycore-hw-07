@@ -1,31 +1,62 @@
-from models import AddressBook, Record
+from colorama import init
+
+from commands import (
+    CommandError,
+    add_birthday,
+    add_contact,
+    birthdays,
+    change_contact,
+    parse_input,
+    show_all,
+    show_birthday,
+    show_phone,
+)
+from models import AddressBook
+from utils import green, red
 
 
-def main():
+def main() -> None:
+    init(autoreset=True)
     book = AddressBook()
+    print(green("Welcome to the assistant bot!"))
+    while True:
+        try:
+            user_input = input("Enter a command: ")
+        except (EOFError, KeyboardInterrupt):
+            print()
+            print(green("Good bye!"))
+            break
 
-    john_record = Record("John")
-    john_record.add_phone("1234567890")
-    john_record.add_phone("5555555555")
+        command, *args = parse_input(user_input)
 
-    book.add_record(john_record)
-
-    jane_record = Record("Jane")
-    jane_record.add_phone("9876543210")
-    book.add_record(jane_record)
-
-    for name, record in book.data.items():
-        print(record)
-
-    john = book.find("John")
-    john.edit_phone("1234567890", "1112223333")
-
-    print(john)
-
-    found_phone = john.find_phone("5555555555")
-    print(f"{john.name}: {found_phone}")
-
-    book.delete("Jane")
+        try:
+            match command:
+                case "close" | "exit":
+                    print(green("Good bye!"))
+                    break
+                case "":
+                    print(red("Please enter a command."))
+                    continue
+                case "hello":
+                    print(green("How can I help you?"))
+                case "add":
+                    print(green(add_contact(args, book)))
+                case "change":
+                    print(green(change_contact(args, book)))
+                case "phone":
+                    print(green(show_phone(args, book)))
+                case "all":
+                    print(green(show_all(args, book)))
+                case "add-birthday":
+                    print(green(add_birthday(args, book)))
+                case "show-birthday":
+                    print(green(show_birthday(args, book)))
+                case "birthdays":
+                    print(green(birthdays(args, book)))
+                case _:
+                    print(red("Invalid command."))
+        except CommandError as exc:
+            print(red(str(exc)))
 
 
 if __name__ == "__main__":
